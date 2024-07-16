@@ -243,7 +243,7 @@ export default function App() {
           <Text style={styles.productName}>{productInfo.product_name}</Text>
           {warnung ? (
             <Text style={styles.ergebnisText}>
-              Achtung dieses Produkt enthält: {problemInhalt.join(", ")}
+              Achtung dieses Produkt enthält: {problemInhalt}
             </Text>
           ) : (
             <Text style={styles.ergebnisText}>Keine Allergien vorhanden</Text>
