@@ -31,7 +31,7 @@ export default function App() {
   const [scanActive, toggleScanActive] = useState(false);
   const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);
   const [warnung, toggleWarnung] = useState(false);
-  const [problemInhalt, setProbleminhalt] = useState<string[]>([]);
+  const [problemInhalt, setProbleminhalt] = useState<string[]>([""]);
   const [optionVis, toggleOptionVis] = useState(false);
   const [allergene, setAllergene] = useState<string[]>([]);
 
@@ -87,6 +87,7 @@ export default function App() {
     getInfos(code);
   }
 
+  // In der getInfos Funktion
   function getInfos(code: string) {
     console.log("Current Code:", code);
     fetch(`https://world.openfoodfacts.org/api/v3/product/${code}.json`)
@@ -102,24 +103,37 @@ export default function App() {
             code: data.product.code,
             product_name: data.product.product_name || "Unknown Product",
             brands: data.product.brands || "Unknown Brand",
-            allergens: data.product.allergens || "None",
+            allergens: data.product.allergens || [],
             ingredients_text:
               data.product.ingredients_text || "No ingredients data",
             image_url: data.product.image_url || "",
           };
           setProductInfo(product);
 
+          // Reset warning and problem content
+          toggleWarnung(false);
+          setProbleminhalt([]);
+
+          // Check allergens against user selected allergens
+          const detectedAllergens: string[] = [];
           allergene.forEach((value) => {
-            if (data.product.allergens.includes(value)) {
-              toggleWarnung(true);
-              setProbleminhalt([
-                ...problemInhalt,
+            if (product.allergens.includes(value)) {
+              detectedAllergens.push(
                 lebensmittelallergeneTranslate[
                   lebensmittelallergene.indexOf(value)
-                ],
-              ]);
+                ]
+              );
             }
           });
+
+          // Update state accordingly
+          if (detectedAllergens.length > 0) {
+            toggleWarnung(true);
+            setProbleminhalt((prevProbleminhalt) => [
+              ...prevProbleminhalt,
+              ...detectedAllergens,
+            ]);
+          }
         } else {
           setProductInfo(null);
         }
@@ -243,7 +257,7 @@ export default function App() {
           <Text style={styles.productName}>{productInfo.product_name}</Text>
           {warnung ? (
             <Text style={styles.ergebnisText}>
-              Achtung dieses Produkt enthält: {problemInhalt}
+              Achtung dieses Produkt enthält: {problemInhalt.join(", ")}
             </Text>
           ) : (
             <Text style={styles.ergebnisText}>Keine Allergien vorhanden</Text>
