@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Aufgabe2",
-    "slug": "Aufgabe2",
+    "name": "ScanSafe",
+    "slug": "ScanSafe",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,10 +28,20 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.Psydo.ScanSafe"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "71876669-34d3-4bba-8b22-ddd77ad8af0a"
+      }
     }
   }
 }
