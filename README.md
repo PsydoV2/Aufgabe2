@@ -40,7 +40,7 @@ Die App wurde mit folgenden Technologien entwickelt:
 
 ## Credits
 
-- <a href="https://www.flaticon.com/free-icons/barcode" title="barcode icons">Barcode icons created by Vectorslab - Flaticon</a>mitwirkender-benutzername)
+- <a href="https://www.flaticon.com/free-icons/barcode" title="barcode icons">Barcode icons created by Vectorslab - Flaticon</a>
 
 ## Lizenz
 
