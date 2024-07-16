@@ -1,17 +1,16 @@
-import { CameraView, FlashMode, useCameraPermissions } from "expo-camera";
-import { useState } from "react";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { useState, useEffect } from "react";
 import {
   Button,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  FlatList,
   Switch,
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface BarcodeScanningResult {
   type: string;
@@ -57,21 +56,29 @@ export default function App() {
     "en:shellfish",
   ];
 
+  useEffect(() => {
+    // Laden der gespeicherten Allergene beim Start der App
+    const loadAllergene = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem("allergene");
+        if (jsonValue !== null) {
+          setAllergene(JSON.parse(jsonValue));
+        }
+      } catch (e) {
+        console.error("Fehler beim Laden der Allergene:", e);
+      }
+    };
+
+    loadAllergene();
+  }, []); // Leerer Abhängigkeitsarray stellt sicher, dass dies nur einmal beim Start der App geladen wird
+
   if (!permission) {
     // Camera permissions are still loading.
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
-    return (
-      <View style={styles.container}>
-        <Text style={{ textAlign: "center" }}>
-          We need your permission to show the camera
-        </Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
+    requestPermission();
   }
 
   function handelBarCodeScan(e: BarcodeScanningResult) {
@@ -102,11 +109,8 @@ export default function App() {
           };
           setProductInfo(product);
 
-          toggleWarnung(false);
-          setProbleminhalt([]);
           allergene.forEach((value) => {
             if (data.product.allergens.includes(value)) {
-              // console.log("Es enthält", value, " an der Stelle ", index);
               toggleWarnung(true);
               setProbleminhalt([
                 ...problemInhalt,
@@ -135,14 +139,21 @@ export default function App() {
     }
   };
 
+  const storeAllergene = async (allergeneToStore: string[]) => {
+    try {
+      const jsonValue = JSON.stringify(allergeneToStore);
+      await AsyncStorage.setItem("allergene", jsonValue);
+    } catch (e) {
+      console.error("Fehler beim Speichern der Allergene:", e);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.menuButton}
         onPress={() => {
           toggleOptionVis(!optionVis);
-
-          console.log(allergene);
         }}
       >
         <Entypo name="menu" size={44} color="#3f545f" />
@@ -152,11 +163,13 @@ export default function App() {
         <View style={styles.optionsPage}>
           <TouchableOpacity
             style={styles.optionsPageCloseButt}
-            onPress={() => toggleOptionVis(!optionVis)}
+            onPress={() => {
+              toggleOptionVis(!optionVis);
+              storeAllergene(allergene); // Speichern der Allergene, wenn die Optionen-Seite geschlossen wird
+            }}
           >
             <AntDesign name="closecircleo" size={24} color="white" />
           </TouchableOpacity>
-          {/* <Text style={styles.optionsTitle}>Unverträglichkeiten</Text> */}
           <Text style={styles.optionsTitle}>Allergene</Text>
 
           {lebensmittelallergeneTranslate.map((allergie, index) => {
@@ -179,7 +192,16 @@ export default function App() {
         size={84}
         color="white"
         style={styles.toggleCam}
-        onPress={() => toggleScanActive(!scanActive)}
+        onPress={() => {
+          console.log(permission);
+          if (permission.status === "denied") {
+            return;
+          }
+          toggleScanActive(!scanActive);
+          setProbleminhalt([]);
+          setProductInfo(null);
+          toggleWarnung(false);
+        }}
       />
 
       {/* Camera */}
@@ -188,11 +210,27 @@ export default function App() {
           style={styles.camera}
           autofocus="on"
           barcodeScannerSettings={{
-            barcodeTypes: ["ean13", "upc_a"],
+            barcodeTypes: [
+              "aztec",
+              "ean13",
+              "ean8",
+              "qr",
+              "pdf417",
+              "upc_e",
+              "datamatrix",
+              "code39",
+              "code93",
+              "itf14",
+              "codabar",
+              "code128",
+              "upc_a",
+            ],
           }}
           onBarcodeScanned={(e) => handelBarCodeScan(e)}
         ></CameraView>
       )}
+
+      <Text style={styles.brandName}>ScanSafe</Text>
 
       {productInfo && (
         <View
@@ -203,7 +241,6 @@ export default function App() {
         >
           <Text style={styles.productBrand}>{productInfo.brands},</Text>
           <Text style={styles.productName}>{productInfo.product_name}</Text>
-          {/* <Text>{productInfo.allergens}</Text> */}
           {warnung ? (
             <Text style={styles.ergebnisText}>
               Achtung dieses Produkt enthält: {problemInhalt.join(", ")}
@@ -219,12 +256,17 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    flexDirection: "column",
+    flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    height: "100%",
     backgroundColor: "#0c0e0f",
+  },
+  brandName: {
+    color: "#3f545f",
+    fontSize: 80,
+    position: "relative",
+    bottom: -250,
+    fontFamily: "Roboto",
   },
   camera: {
     height: "50%",
@@ -237,11 +279,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 100,
   },
-  toggleCamText: {
-    color: "#eeeff0",
-    fontSize: 40,
-    textAlign: "center",
-  },
   responseContainer: {
     position: "absolute",
     bottom: 100,
@@ -250,10 +287,6 @@ const styles = StyleSheet.create({
     height: 200,
     width: "95%",
   },
-  responseText: {
-    color: "white",
-    fontSize: 36,
-  },
   productBrand: {
     fontSize: 22,
     fontWeight: "800",
@@ -261,11 +294,6 @@ const styles = StyleSheet.create({
   productName: {
     color: "black",
     fontSize: 20,
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
   },
   menuButton: {
     position: "absolute",
@@ -281,7 +309,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: "black",
-    display: "flex",
     flexDirection: "column",
     alignItems: "center",
   },
@@ -298,7 +325,6 @@ const styles = StyleSheet.create({
   },
   allergieItem: {
     width: "70%",
-    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -315,9 +341,3 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 });
-
-// --text: #eeeff0;
-// --background: #0c0e0f;
-// --primary: #b4c1c8;
-// --secondary: #3f545f;
-// --accent: #7599ac;
