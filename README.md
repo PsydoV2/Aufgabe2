@@ -38,6 +38,10 @@ Die App wurde mit folgenden Technologien entwickelt:
 - **TypeScript**
 - **Open Food Facts API**
 
+## Download Android
+
+[Download](https://expo.dev/artifacts/eas/4jgn3vLMiv6NSADYXZFQKx.apk)
+
 ## Credits
 
 - <a href="https://www.flaticon.com/free-icons/barcode" title="barcode icons">Barcode icons created by Vectorslab - Flaticon</a>
