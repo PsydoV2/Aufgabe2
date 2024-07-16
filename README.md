@@ -2,7 +2,7 @@
 
 ScanSafe ist eine mobile App, die es ermöglicht, Barcodes zu scannen und zu prüfen, ob Produkte potenzielle Allergene enthalten. Die App hilft Menschen mit Allergien, schnell und einfach festzustellen, ob ein Produkt für sie sicher ist.
 
-![ScanSafe App Screenshot](link-zum-screenshot.png)
+<img src="https://i.imgur.com/JR6zBh6.png" alt="Preview1" style="border-radius: 10px;" />
 
 ## Funktionen
 
