@@ -29,10 +29,18 @@ Die App unterstützt die Erkennung folgender Allergene:
 - Weizen
 - Schalentiere
 
-## Mitwirkende
+## Genutzte Technologien
 
-- [Dein Name](https://github.com/dein-benutzername)
-- [Mitwirkender Name](https://github.com/mitwirkender-benutzername)
+Die App wurde mit folgenden Technologien entwickelt:
+
+- **React Native**
+- **Expo**
+- **TypeScript**
+- **Open Food Facts API**
+
+## Credits
+
+- <a href="https://www.flaticon.com/free-icons/barcode" title="barcode icons">Barcode icons created by Vectorslab - Flaticon</a>mitwirkender-benutzername)
 
 ## Lizenz
 
