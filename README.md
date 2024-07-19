@@ -42,6 +42,9 @@ Die App wurde mit folgenden Technologien entwickelt:
 
 [Download](https://expo.dev/artifacts/eas/4jgn3vLMiv6NSADYXZFQKx.apk)
 
+![image](https://github.com/user-attachments/assets/30b38558-2ee4-4a2f-a5b2-320b9bef6804)
+
+
 ## Credits
 
 - <a href="https://www.flaticon.com/free-icons/barcode" title="barcode icons">Barcode icons created by Vectorslab - Flaticon</a>
