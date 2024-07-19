@@ -42,6 +42,13 @@ Die App wurde mit folgenden Technologien entwickelt:
 
 [Download](https://expo.dev/artifacts/eas/4jgn3vLMiv6NSADYXZFQKx.apk)
 
+### Live Preview
+
+ExpoGo App wird benötigt
+
+iOS -> Mit der Kamera scannen
+Android -> Mit der ExpoGo App scannen
+
 ![image](https://github.com/user-attachments/assets/30b38558-2ee4-4a2f-a5b2-320b9bef6804)
 
 
